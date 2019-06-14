@@ -27,7 +27,7 @@ public class bt102b1 {
         System.out.print("Nhập chuỗi SEARCHING: ");
         searching = z.nextLine();
         
-        while (chiSoTimThay != -1)
+        while (-1 != chiSoTimThay)
         {
             chiSoTimThay = source.toLowerCase().indexOf(searching.toLowerCase(), chiSoBatDau + 1);
             ketQuaTimDuoc++;

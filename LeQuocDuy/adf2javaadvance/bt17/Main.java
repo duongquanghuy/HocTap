@@ -69,7 +69,14 @@ public class Main {
                         System.out.println("TÌM KIẾM THÔNG TIN SINH VIÊN");
                         System.out.print("Nhập Mã SV: ");
                         chuoiKiemTra = z.nextLine();
-                        for (Map.Entry sv : sinhVienMap.entrySet()) {
+                        if(sinhVienMap.containsKey(chuoiKiemTra)){
+                            System.out.println(sinhVienMap.get(chuoiKiemTra).toString());
+                        }
+                        else{
+                            System.out.println("Không tìm thấy SV khớp với Mã SV đã nhập!");
+                        }
+                        
+                        /*for (Map.Entry sv : sinhVienMap.entrySet()) {
                             if ((sv.getKey()).equals(chuoiKiemTra)) {
                                 ketQuaTimDuoc++;
                             }
@@ -80,7 +87,7 @@ public class Main {
                         } else {
                             System.out.println(sinhVienMap.get(chuoiKiemTra).toString());
                             ketQuaTimDuoc = 0;
-                        }
+                        }*/
                     }
                     break;
 
