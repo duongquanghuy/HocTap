@@ -82,9 +82,15 @@ public class Bai17 {
     private static void searchStudent() {
         System.out.println("nhap ma sinh vien can tim ");
         String ma = s.nextLine();
-         
-        Student std = studentMap.get(ma);
-        std.display();
+        
+        if(studentMap.containsKey(ma)){
+            System.out.println(studentMap.get(ma).toString());
+        }
+        else{
+        
+            System.out.println("khong tim thay");
+        }
+        
         }
     
     
