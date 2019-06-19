@@ -25,7 +25,6 @@ public class bt19b2 {
 
             //Kiểm tra thư mục có tồn tại?
             System.out.println("Thư mục có tồn tại: " + file.exists());
-            System.out.println("");
             
             if(file.exists()){
                 rep = false;
