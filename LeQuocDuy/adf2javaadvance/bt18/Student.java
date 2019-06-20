@@ -4,14 +4,15 @@
  * and open the template in the editor.
  */
 package adf2javaadvance.bt18;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Scanner;
 /**
  *
  * @author Duy Lumiere
  */
-public class Student {
-    Scanner z = new Scanner(System.in).useLocale(Locale.ENGLISH);
+public class Student implements Serializable {
+    transient Scanner z = new Scanner(System.in).useLocale(Locale.ENGLISH);
     
     private String id;
     private String name;
