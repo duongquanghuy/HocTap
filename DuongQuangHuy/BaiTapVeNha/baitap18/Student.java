@@ -11,7 +11,7 @@ import java.util.Scanner;
  *
  * @author DuongQuangHuy
  */
-public class Student {
+public class Student implements Serializable{
     String id;
     String name;
     int age;
