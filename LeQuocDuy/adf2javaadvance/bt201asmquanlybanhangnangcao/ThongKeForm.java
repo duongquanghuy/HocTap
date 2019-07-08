@@ -5,6 +5,8 @@
  */
 package adf2javaadvance.bt201asmquanlybanhangnangcao;
 
+import static adf2javaadvance.bt201asmquanlybanhangnangcao.DangNhapVaDangKyForm.menuChuongTrinhForm;
+
 /**
  *
  * @author Duy Lumiere
@@ -16,6 +18,12 @@ public class ThongKeForm extends javax.swing.JFrame {
      */
     public ThongKeForm() {
         initComponents();
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                menuChuongTrinhForm.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -31,7 +39,7 @@ public class ThongKeForm extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblThongKe = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Thống Kê", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 17))); // NOI18N
 
@@ -116,6 +124,7 @@ public class ThongKeForm extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     /**

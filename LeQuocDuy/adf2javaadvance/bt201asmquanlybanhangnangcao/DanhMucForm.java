@@ -5,17 +5,85 @@
  */
 package adf2javaadvance.bt201asmquanlybanhangnangcao;
 
+import static adf2javaadvance.bt201asmquanlybanhangnangcao.DangNhapVaDangKyForm.menuChuongTrinhForm;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Duy Lumiere
  */
 public class DanhMucForm extends javax.swing.JFrame {
 
+    DefaultTableModel tableModel;
+
+    int chiSoHienTai = -1;
+    boolean banGhiDanhMucDuocChon = false;
+
+    List<DanhMuc> danhSachDanhMuc = new ArrayList<>();
+
     /**
      * Creates new form Main
      */
     public DanhMucForm() {
         initComponents();
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                menuChuongTrinhForm.setVisible(true);
+            }
+        });
+
+        tableModel = (DefaultTableModel) tblDanhMuc.getModel();
+
+        layDanhMucTuCsdl();
+        hienDanhMucTrongBang();
+
+        tblDanhMuc.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    chiSoHienTai = tblDanhMuc.getSelectedRow();
+                    DanhMuc dm = danhSachDanhMuc.get(chiSoHienTai);
+
+                    banGhiDanhMucDuocChon = true;
+
+                    txtMaDanhMuc.setText(dm.getMaDanhMuc());
+                    txtTenDanhMuc.setText(dm.getTenDanhMuc());
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+        });
     }
 
     /**
@@ -36,7 +104,7 @@ public class DanhMucForm extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDanhMuc = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh Mục Sản Phẩm", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 17))); // NOI18N
         jPanel1.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -165,18 +233,176 @@ public class DanhMucForm extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+    private void layDanhMucTuCsdl() {
+        danhSachDanhMuc.clear();
+
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bt201quanlybanhang?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+
+            String sqlSel = "select * from categories";
+
+            Statement st = conn.createStatement();
+
+            ResultSet rs = st.executeQuery(sqlSel);
+
+            while (rs.next()) {
+                DanhMuc danhMuc = new DanhMuc(rs.getString("categoryId"), rs.getString("categoryName"));
+                danhSachDanhMuc.add(danhMuc);
+            }
+
+            rs.close();
+            st.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DanhMucForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void hienDanhMucTrongBang() {
+        tableModel.setRowCount(0);
+
+        danhSachDanhMuc.forEach((dm) -> {
+            tableModel.addRow(new Object[]{dm.getMaDanhMuc(), dm.getTenDanhMuc()});
+        });
+    }
 
     private void btnThemDmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDmActionPerformed
-        // TODO add your handling code here:
+        if (txtMaDanhMuc.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn chưa nhập Mã Danh Mục!", "Thông Báo", 1);
+            return;
+        }
+
+        if (txtTenDanhMuc.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn chưa nhập Tên Danh Mục!", "Thông Báo", 1);
+            return;
+        }
+        
+        String maDanhMuc = txtMaDanhMuc.getText();
+        String tenDanhMuc = txtTenDanhMuc.getText();
+        boolean kiemTraMaDanhMuc = false;
+
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bt201quanlybanhang?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+
+            String sqlSel = "select categoryId from categories";
+
+            Statement st = conn.createStatement();
+
+            ResultSet rs = st.executeQuery(sqlSel);
+
+            while (rs.next()) {
+                if (maDanhMuc.equals(rs.getString("categoryId"))) {
+                    kiemTraMaDanhMuc = true;
+                }
+            }
+
+            if (kiemTraMaDanhMuc) {
+                JOptionPane.showMessageDialog(rootPane, "Mã Danh Mục đã tồn tại!\nVui lòng dùng Mã khác!", "Trùng Mã Danh Mục", 1);
+            } else {
+                String sqlIns = "insert into categories(categoryId, categoryName) values(?, ?)";
+
+                PreparedStatement ps = conn.prepareStatement(sqlIns);
+
+                ps.setString(1, maDanhMuc);
+                ps.setString(2, tenDanhMuc);
+
+                ps.execute();
+                ps.close();
+                JOptionPane.showMessageDialog(rootPane, "Thêm Danh Mục thành công!", "Thêm Danh Mục", 1);
+            }
+
+            rs.close();
+            st.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DanhMucForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        txtMaDanhMuc.setText("");
+        txtTenDanhMuc.setText("");
+        layDanhMucTuCsdl();
+        hienDanhMucTrongBang();
     }//GEN-LAST:event_btnThemDmActionPerformed
 
     private void btnSuaDmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaDmActionPerformed
-        // TODO add your handling code here:
+        if (banGhiDanhMucDuocChon) {
+            banGhiDanhMucDuocChon = false;
+            int xacNhanSua = JOptionPane.showConfirmDialog(rootPane, "Bạn có chắc muốn Sửa Danh Mục này theo các thông tin đã nhập?", "Cảnh Báo", 2);
+            if (xacNhanSua == JOptionPane.YES_OPTION) {
+                String maDanhMuc = txtMaDanhMuc.getText();
+                String tenDanhMuc = txtTenDanhMuc.getText();
+
+                String sqlUpd = "update categories set categoryId=?, categoryName=? where categoryId=?";
+
+                try {
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bt201quanlybanhang?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+
+                    PreparedStatement ps = conn.prepareStatement(sqlUpd);
+
+                    ps.setString(1, maDanhMuc);
+                    ps.setString(2, tenDanhMuc);
+                    ps.setString(3, maDanhMuc);
+
+                    ps.execute();
+
+                    ps.close();
+                    conn.close();
+
+                    JOptionPane.showMessageDialog(rootPane, "Cập nhật dữ liệu thành công!", "Thông Báo", 1);
+                } catch (SQLException ex) {
+                    Logger.getLogger(DanhMucForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Không có bất kỳ sự Thay Đổi Dữ Liệu nào đã diễn ra", "Thông Báo", 1);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Bạn chưa chọn đối tượng nào để Sửa!\nVui lòng click đúp chuột vào 1 bản ghi bất kỳ để thực hiện tiến trình!", "Thông Báo", 1);
+        }
+
+        txtMaDanhMuc.setText("");
+        txtTenDanhMuc.setText("");
+        layDanhMucTuCsdl();
+        hienDanhMucTrongBang();
     }//GEN-LAST:event_btnSuaDmActionPerformed
 
     private void btnXoaDmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaDmActionPerformed
-        // TODO add your handling code here:
+        if (banGhiDanhMucDuocChon) {
+            banGhiDanhMucDuocChon = false;
+            int xacNhanXoa = JOptionPane.showConfirmDialog(rootPane, "Bạn có chắc muốn Xóa Danh Mục này?", "Cảnh Báo", 2);
+            if (xacNhanXoa == JOptionPane.YES_OPTION) {
+                String maDanhMuc = txtMaDanhMuc.getText();
+
+                String sqlDel = "delete from categories where categoryId=?";
+
+                try {
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bt201quanlybanhang?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+
+                    PreparedStatement ps = conn.prepareStatement(sqlDel);
+
+                    ps.setString(1, maDanhMuc);
+
+                    ps.execute();
+
+                    ps.close();
+                    conn.close();
+
+                    JOptionPane.showMessageDialog(rootPane, "Cập nhật dữ liệu thành công!", "Thông Báo", 1);
+                } catch (SQLException ex) {
+                    Logger.getLogger(DanhMucForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Không có bất kỳ sự Thay Đổi Dữ Liệu nào đã diễn ra", "Thông Báo", 1);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Bạn chưa chọn đối tượng nào để Xóa!\nVui lòng click đúp chuột vào 1 bản ghi bất kỳ để thực hiện tiến trình!", "Thông Báo", 1);
+        }
+
+        txtMaDanhMuc.setText("");
+        txtTenDanhMuc.setText("");
+        layDanhMucTuCsdl();
+        hienDanhMucTrongBang();
     }//GEN-LAST:event_btnXoaDmActionPerformed
 
     /**

@@ -5,6 +5,17 @@
  */
 package adf2javaadvance.bt201asmquanlybanhangnangcao;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.*;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Duy Lumiere
@@ -14,8 +25,28 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
     /**
      * Creates new form DangNhapVaDangKyForm
      */
+    String regexUser = "[A-Za-z0-9]{6,20}";
+    String regexPass = "[A-Za-z0-9]{8,20}";
+
+    static MenuChuongTrinhForm menuChuongTrinhForm = new MenuChuongTrinhForm();
+    static DangNhapVaDangKyForm dangNhapVaDangKyForm = new DangNhapVaDangKyForm();
+    static DanhMucForm danhMucForm = new DanhMucForm();
+    static SanPhamForm sanPhamForm = new SanPhamForm();
+    static ThongKeForm thongKeForm = new ThongKeForm();
+
     public DangNhapVaDangKyForm() {
         initComponents();
+        jLabel13.setVisible(false);
+        jLabel14.setVisible(false);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(rootPane,
+                    "Bạn có thực sự muốn Thoát khỏi chương trình?", "Xác nhận Thoát?", 2) == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+            }
+        });
     }
 
     /**
@@ -49,7 +80,7 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(null, "ĐĂNG NHẬP", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 17)))); // NOI18N
 
@@ -89,14 +120,14 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnDangNhap)
-                        .addGap(35, 35, 35)
+                        .addComponent(btnDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4)))
                     .addComponent(txtTenNguoiDung)
                     .addComponent(txtMatKhau))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(177, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,14 +160,24 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
         jLabel7.setText("Mật Khẩu:");
 
         txtTenNguoiDung2.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        txtTenNguoiDung2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTenNguoiDung2KeyReleased(evt);
+            }
+        });
 
         txtMatKhau2.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        txtMatKhau2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtMatKhau2KeyReleased(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 2, 15)); // NOI18N
         jLabel8.setText("*Lưu ý:");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 2, 15)); // NOI18N
-        jLabel9.setText("- Tên Người Dùng và Mật Khẩu chỉ chấp nhận các ký từ A - Z và từ 0 - 9");
+        jLabel9.setText("- Tên Người Dùng và Mật Khẩu chỉ chấp nhận các ký tự A - Z và từ 0 - 9");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 2, 15)); // NOI18N
         jLabel10.setText("- CÓ PHÂN BIỆT CHỮ HOA - THƯỜNG");
@@ -188,10 +229,10 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
                                     .addComponent(jLabel9)
                                     .addComponent(jLabel8)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(txtMatKhau2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                                    .addComponent(txtTenNguoiDung2, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtTenNguoiDung2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                                    .addComponent(txtMatKhau2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel13)
                                     .addComponent(jLabel14))
@@ -203,9 +244,9 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
                             .addComponent(jLabel11)
                             .addComponent(jLabel10)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnDangKy, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(40, 40, 40)
-                                .addComponent(btnLamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(btnDangKy, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)
+                                .addComponent(btnLamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -234,7 +275,7 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel12))
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -245,11 +286,11 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(214, 214, 214))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -259,25 +300,147 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDangKyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangKyActionPerformed
-        // TODO add your handling code here:
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bt201quanlybanhang?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+
+            String tenNguoiDungDk = txtTenNguoiDung2.getText();
+            String matKhauDk = txtMatKhau2.getText();
+            boolean kTraTenNguoiDung = false;
+
+            if (tenNguoiDungDk.matches(regexUser) && matKhauDk.matches(regexPass)) {
+
+                String sqlSel = "Select username from users";
+
+                Statement st = conn.createStatement();
+
+                ResultSet rs = st.executeQuery(sqlSel);
+
+                while (rs.next()) {
+                    if (tenNguoiDungDk.equals(rs.getString("username"))) {
+                        kTraTenNguoiDung = true;
+                    }
+                }
+
+                if (kTraTenNguoiDung) {
+                    JOptionPane.showMessageDialog(rootPane, "Tên người dùng bị trùng!\nVui lòng thử lại với Tên người dùng khác!");
+                    txtTenNguoiDung2.setText("");
+                    txtMatKhau2.setText("");
+                    jLabel13.setVisible(false);
+                    jLabel14.setVisible(false);
+                } else {
+                    String sqlIns = "Insert into users(username, password) values (?, ?)";
+
+                    PreparedStatement ps = conn.prepareStatement(sqlIns);
+
+                    ps.setString(1, tenNguoiDungDk);
+                    ps.setString(2, matKhauDk);
+
+                    ps.execute();
+
+                    ps.close();
+
+                    JOptionPane.showMessageDialog(rootPane, "Đăng Ký Thành Công!");
+
+                    txtTenNguoiDung2.setText("");
+                    txtMatKhau2.setText("");
+                    jLabel13.setVisible(false);
+                    jLabel14.setVisible(false);
+
+                    txtTenNguoiDung.setText(tenNguoiDungDk);
+                    txtMatKhau.setText(matKhauDk);
+                }
+                rs.close();
+                st.close();
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Tên Người Dùng và Mật khẩu chưa Hợp Lệ! Vui lòng thử lại!");
+                txtTenNguoiDung2.setText("");
+                txtMatKhau2.setText("");
+                jLabel13.setVisible(false);
+                jLabel14.setVisible(false);
+            }
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DangNhapVaDangKyForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnDangKyActionPerformed
 
     private void btnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoiActionPerformed
-        // TODO add your handling code here:
+        txtTenNguoiDung2.setText("");
+        txtMatKhau2.setText("");
     }//GEN-LAST:event_btnLamMoiActionPerformed
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
-        // TODO add your handling code here:
+        String tenNguoiDungDn = txtTenNguoiDung.getText();
+        String matKhauDn = txtMatKhau.getText();
+        boolean kTraDangNhap = false;
+
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bt201quanlybanhang?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+
+            String sqlSel = "select * from users";
+
+            Statement st = conn.createStatement();
+
+            ResultSet rs = st.executeQuery(sqlSel);
+
+            while (rs.next()) {
+                if (tenNguoiDungDn.equals(rs.getString("username")) && matKhauDn.equals(rs.getString("password"))) {
+                    kTraDangNhap = true;
+                }
+            }
+
+            if (kTraDangNhap) {
+                txtTenNguoiDung.setText("");
+                txtMatKhau.setText("");
+                JOptionPane.showMessageDialog(rootPane, "Đăng nhập Thành Công!");
+
+                this.setVisible(false);
+                menuChuongTrinhForm.setVisible(true);
+
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Tên Người Dùng hoặc Mật Khẩu KHÔNG CHÍNH XÁC!\n Vui lòng thử lại!");
+                txtTenNguoiDung.setText("");
+                txtMatKhau.setText("");
+            }
+
+            rs.close();
+            st.close();
+            conn.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DangNhapVaDangKyForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnDangNhapActionPerformed
+
+    private void txtTenNguoiDung2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenNguoiDung2KeyReleased
+        String tenNguoiDungDk = txtTenNguoiDung2.getText();
+
+        if (tenNguoiDungDk.matches(regexUser)) {
+            jLabel13.setVisible(true);
+        } else {
+            jLabel13.setVisible(false);
+        }
+    }//GEN-LAST:event_txtTenNguoiDung2KeyReleased
+
+    private void txtMatKhau2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMatKhau2KeyReleased
+        String matKhauDk = txtMatKhau2.getText();
+
+        if (matKhauDk.matches(regexPass)) {
+            jLabel14.setVisible(true);
+        } else {
+            jLabel14.setVisible(false);
+        }
+    }//GEN-LAST:event_txtMatKhau2KeyReleased
 
     /**
      * @param args the command line arguments
@@ -309,9 +472,11 @@ public class DangNhapVaDangKyForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DangNhapVaDangKyForm().setVisible(true);
+                dangNhapVaDangKyForm.setVisible(true);
+
             }
         });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
